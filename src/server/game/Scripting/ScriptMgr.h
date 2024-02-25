@@ -303,7 +303,7 @@ public: /* PlayerScript */
     void OnPlayerPVPFlagChange(Player* player, bool state);
     void OnCreatureKill(Player* killer, Creature* killed);
     void OnCreatureKilledByPet(Player* petOwner, Creature* killed);
-    void OnPlayerKilledByCreature(Creature* killer, Player* killed);
+    void OnPlayerKilledByCreature(Creature* killer, Player* killed, bool& durabilityLoss);
     void OnPlayerLevelChanged(Player* player, uint8 oldLevel);
     void OnPlayerFreeTalentPointsChanged(Player* player, uint32 newPoints);
     void OnPlayerTalentsReset(Player* player, bool noCost);
@@ -457,6 +457,12 @@ public: /* PlayerScript */
     void OnAfterCreatureLoot(Player* player);
     void OnAfterCreatureLootMoney(Player* player);
     bool OnCanPlayerFlyInZone(Player* player, uint32 mapId, uint32 zoneId, SpellInfo const* bySpell);
+    bool OnPlayerHandleTaxi(Player* player, TaxiNodesEntry const* sourcepath);
+    void OnPlayerLogoutRequest(Player* player);
+    void MaxPrimaryTradeSkill(Player* player, uint32& maxSkillsAllowed);
+    void OnReputationGain(Player* player, float& reputation);
+    void UpdateCraftingSkillAmount(Player* player, uint32& amount);
+    void UpdateGatheringSkillAmount(Player* player, uint32& amount);
 
     // Anti cheat
     void AnticheatSetCanFlybyServer(Player* player, bool apply);

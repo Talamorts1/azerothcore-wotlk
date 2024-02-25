@@ -130,11 +130,11 @@ void ScriptMgr::OnCreatureKilledByPet(Player* petOwner, Creature* killed)
     });
 }
 
-void ScriptMgr::OnPlayerKilledByCreature(Creature* killer, Player* killed)
+void ScriptMgr::OnPlayerKilledByCreature(Creature* killer, Player* killed, bool& durabilityLoss)
 {
     ExecuteScript<PlayerScript>([&](PlayerScript* script)
     {
-        script->OnPlayerKilledByCreature(killer, killed);
+        script->OnPlayerKilledByCreature(killer, killed, durabilityLoss);
     });
 }
 
@@ -1732,6 +1732,62 @@ bool ScriptMgr::AnticheatCheckMovementInfo(Player* player, MovementInfo const& m
     }
 
     return true;
+}
+
+bool ScriptMgr::OnPlayerHandleTaxi(Player* player, TaxiNodesEntry const* sourcepath)
+{
+    auto ret = IsValidBoolScript<PlayerScript>([&](PlayerScript* script)
+        {
+            return !script->OnPlayerHandleTaxi(player, sourcepath);
+        });
+
+    if (ret && *ret)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+void ScriptMgr::OnPlayerLogoutRequest(Player* player)
+{
+    ExecuteScript<PlayerScript>([&](PlayerScript* script)
+        {
+            script->OnPlayerLogoutRequest(player);
+        });
+}
+
+void ScriptMgr::MaxPrimaryTradeSkill(Player* player, uint32& maxSkillsAllowed)
+{
+
+    ExecuteScript<PlayerScript>([&](PlayerScript* script)
+        {
+            script->MaxPrimaryTradeSkill(player, maxSkillsAllowed);
+        });
+}
+
+void ScriptMgr::UpdateCraftingSkillAmount(Player* player, uint32& UpdateAmount)
+{
+    ExecuteScript<PlayerScript>([&](PlayerScript* script)
+        {
+            script->UpdateCraftingSkillAmount(player, UpdateAmount);
+        });
+}
+
+void ScriptMgr::UpdateGatheringSkillAmount(Player* player, uint32& UpdateAmount)
+{
+    ExecuteScript<PlayerScript>([&](PlayerScript* script)
+        {
+            script->UpdateGatheringSkillAmount(player, UpdateAmount);
+        });
+}
+
+void ScriptMgr::OnReputationGain(Player* player, float& reputation)
+{
+    ExecuteScript<PlayerScript>([&](PlayerScript* script)
+        {
+            script->OnReputationGain(player, reputation);
+        });
 }
 
 PlayerScript::PlayerScript(const char* name)

@@ -731,6 +731,8 @@ bool Player::UpdateGatherSkill(uint32 SkillId, uint32 SkillValue,
         sWorld->getIntConfig(CONFIG_SKILL_GAIN_GATHERING);
     sScriptMgr->OnUpdateGatheringSkill(this, SkillId, SkillValue, RedLevel + 100, RedLevel + 50, RedLevel + 25, gathering_skill_gain);
 
+    sScriptMgr->UpdateGatheringSkillAmount(this, gathering_skill_gain);
+
     // For skinning and Mining chance decrease with level. 1-74 - no decrease,
     // 75-149 - 2 times, 225-299 - 8 times
     switch (SkillId)
@@ -808,6 +810,7 @@ bool Player::UpdateCraftSkill(uint32 spellid)
             uint32 craft_skill_gain =
                 sWorld->getIntConfig(CONFIG_SKILL_GAIN_CRAFTING);
             sScriptMgr->OnUpdateCraftingSkill(this, _spell_idx->second, SkillValue, craft_skill_gain);
+            sScriptMgr->UpdateCraftingSkillAmount(this, craft_skill_gain);
 
             return UpdateSkillPro(
                 _spell_idx->second->SkillLine,
@@ -858,10 +861,12 @@ bool Player::UpdateFishingSkill()
     /* Whenever the player clicks on the fishing gameobject the
      * core will decide based on a probability if the skill raises or not.
      */
+    uint32 gainFishingSkill = sWorld->getIntConfig(CONFIG_SKILL_GAIN_GATHERING);
+    sScriptMgr->UpdateGatheringSkillAmount(this, gainFishingSkill);
+
     return UpdateSkillPro(
         SKILL_FISHING,
-        static_cast<int32>(getProbabilityOfLevelUp(SkillValue)) * 10,
-        sWorld->getIntConfig(CONFIG_SKILL_GAIN_GATHERING));
+        static_cast<int32>(getProbabilityOfLevelUp(SkillValue)) * 10, gainFishingSkill);
 }
 
 // levels sync. with spell requirement for skill levels to learn

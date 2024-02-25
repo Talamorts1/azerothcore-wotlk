@@ -384,7 +384,9 @@ bool ReputationMgr::SetOneFactionReputation(FactionEntry const* factionEntry, fl
 
         if (incremental)
         {
-            stand *= sWorld->getRate(RATE_REPUTATION_GAIN);
+            float ReputationGain = sWorld->getRate(RATE_REPUTATION_GAIN);
+            sScriptMgr->OnReputationGain(_player, ReputationGain);
+            stand *= ReputationGain;
         }
 
         int32 standing = 0;

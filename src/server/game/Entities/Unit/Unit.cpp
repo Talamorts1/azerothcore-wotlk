@@ -18283,7 +18283,8 @@ void Unit::Kill(Unit* killer, Unit* victim, bool durabilityLoss, WeaponAttackTyp
         else if (Creature* killerCre = killer->ToCreature())
         {
             if (Player* killed = victim->ToPlayer())
-                sScriptMgr->OnPlayerKilledByCreature(killerCre, killed);
+                sScriptMgr->OnPlayerKilledByCreature(killerCre, killed, durabilityLoss
+                );
         }
     }
 

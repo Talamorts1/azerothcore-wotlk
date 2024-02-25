@@ -3371,7 +3371,11 @@ void Player::removeSpell(uint32 spell_id, uint8 removeSpecMask, bool onlyTempora
     if (spellInfo->IsPrimaryProfessionFirstRank())
     {
         uint32 freeProfs = GetFreePrimaryProfessionPoints() + 1;
-        if (freeProfs <= sWorld->getIntConfig(CONFIG_MAX_PRIMARY_TRADE_SKILL))
+        uint32 MaxPrimaryTradeSkill = sWorld->getIntConfig(CONFIG_MAX_PRIMARY_TRADE_SKILL);
+
+        sScriptMgr->MaxPrimaryTradeSkill(this, MaxPrimaryTradeSkill);
+
+        if (freeProfs <= MaxPrimaryTradeSkill)
             SetFreePrimaryProfessions(freeProfs);
     }
 
@@ -4399,6 +4403,7 @@ void Player::BuildPlayerRepop()
     corpse->ResetGhostTime(); // to prevent cheating
     StopMirrorTimers(); // disable timers on bars
     SetByteValue(UNIT_FIELD_BYTES_1, UNIT_BYTES_1_OFFSET_ANIM_TIER, UNIT_BYTE1_FLAG_ALWAYS_STAND); // set and clear other
+    setDeathState(DeathState::Dead);
     sScriptMgr->OnPlayerReleasedGhost(this);
 }
 
@@ -5975,6 +5980,8 @@ void Player::RewardReputation(Quest const* quest)
         {
             rep = CalculateReputationGain(REPUTATION_SOURCE_QUEST, GetQuestLevel(quest), rep, quest->RewardFactionId[i], false);
         }
+
+        sScriptMgr->OnReputationGain(this, rep);
 
         if (FactionEntry const* factionEntry = sFactionStore.LookupEntry(quest->RewardFactionId[i]))
         {
@@ -10326,6 +10333,10 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc 
     // prevent stealth flight
     //RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TALK);
 
+    TaxiNodesEntry const* lastPathNode = sTaxiNodesStore.LookupEntry(nodes[nodes.size() - 1]);
+    if (sScriptMgr->OnPlayerHandleTaxi(this, lastPathNode))
+        return false;
+
     // Xinef: dont use instant flight paths if spellid is present (custom calls use spellid = 1)
     if ((sWorld->getIntConfig(CONFIG_INSTANT_TAXI) == 1 || (sWorld->getIntConfig(CONFIG_INSTANT_TAXI) == 2 && m_isInstantFlightOn)) && !spellid)
     {
@@ -11443,7 +11454,9 @@ bool Player::IsVisibleGloballyFor(Player const* u) const
 
 void Player::InitPrimaryProfessions()
 {
-    SetFreePrimaryProfessions(sWorld->getIntConfig(CONFIG_MAX_PRIMARY_TRADE_SKILL));
+    uint32 PrimaryPoffessions = sWorld->getIntConfig(CONFIG_MAX_PRIMARY_TRADE_SKILL);
+    sScriptMgr->MaxPrimaryTradeSkill(this, PrimaryPoffessions);
+    SetFreePrimaryProfessions(PrimaryPoffessions);
 }
 
 bool Player::ModifyMoney(int32 amount, bool sendError /*= true*/)

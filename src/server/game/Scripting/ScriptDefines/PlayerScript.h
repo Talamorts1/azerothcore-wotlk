@@ -58,7 +58,7 @@ public:
     virtual void OnCreatureKilledByPet(Player* /*PetOwner*/, Creature* /*killed*/) { }
 
     // Called when a player is killed by a creature
-    virtual void OnPlayerKilledByCreature(Creature* /*killer*/, Player* /*killed*/) { }
+    virtual void OnPlayerKilledByCreature(Creature* /*killer*/, Player* /*killed*/, bool& /*durability Loss*/) { }
 
     // Called when a player's level changes (right after the level is applied)
     virtual void OnLevelChanged(Player* /*player*/, uint8 /*oldlevel*/) { }
@@ -569,6 +569,24 @@ public:
      * @param player Contains information about the Player
      */
     virtual void OnAfterCreatureLootMoney(Player* /*player*/) { }
+
+    // Called when player want to use Taxi
+    virtual bool OnPlayerHandleTaxi(Player* player, TaxiNodesEntry const* sourcepath) { return true; }
+
+    // Called when player clicks logout button
+    virtual void OnPlayerLogoutRequest(Player* /*player*/) {}
+
+    // Called for the amount of primary professions a player can have 
+    virtual void MaxPrimaryTradeSkill(Player* player, uint32& maxSkillsAllowed) { }
+
+    // Called when player gains reputation
+    virtual void OnReputationGain(Player* player, float& gain) { }
+
+    // Called when player gains a skill in gathering
+    virtual void UpdateGatheringSkillAmount(Player* /*player*/, uint32& /*amount*/) { }
+
+    // Called when a player gains a skill point in crafting
+    virtual void UpdateCraftingSkillAmount(Player* /*player*/, uint32& /*amount*/) {}
 };
 
 #endif
