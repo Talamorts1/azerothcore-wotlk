@@ -46,11 +46,11 @@ void ScriptMgr::OnHeal(Unit* healer, Unit* reciever, uint32& gain)
     });
 }
 
-void ScriptMgr::OnDamage(Unit* attacker, Unit* victim, uint32& damage)
+void ScriptMgr::OnDamage(Unit* attacker, Unit* victim, uint32& damage, DamageEffectType damagetype, SpellInfo const* spellProto)
 {
     ExecuteScript<UnitScript>([&](UnitScript* script)
     {
-        script->OnDamage(attacker, victim, damage);
+        script->OnDamage(attacker, victim, damage, damagetype, spellProto);
     });
 }
 

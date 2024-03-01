@@ -33,7 +33,7 @@ public:
     virtual void OnHeal(Unit* /*healer*/, Unit* /*reciever*/, uint32& /*gain*/) { }
 
     // Called when a unit deals damage to another unit
-    virtual void OnDamage(Unit* /*attacker*/, Unit* /*victim*/, uint32& /*damage*/) { }
+    virtual void OnDamage(Unit* /*attacker*/, Unit* /*victim*/, uint32& /*damage*/, DamageEffectType /*damagetype*/, SpellInfo const* /*spellProto*/) { }
 
     // Called when DoT's Tick Damage is being Dealt
     // Attacker can be nullptr if he is despawned while the aura still exists on target
