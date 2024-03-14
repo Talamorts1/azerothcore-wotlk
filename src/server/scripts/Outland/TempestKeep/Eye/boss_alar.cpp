@@ -115,6 +115,8 @@ struct boss_alar : public BossAI
         _canAttackCooldown = true;
         _baseAttackOverride = false;
         _spawnPhoenixes = false;
+        _hasPretendedToDie = false;
+        _transitionScheduler.CancelAll();
         _platform = 0;
         _noMelee = false;
         _platformRoll = 0;
@@ -178,25 +180,26 @@ struct boss_alar : public BossAI
 
     void DamageTaken(Unit* /*attacker*/, uint32& damage, DamageEffectType /*damagetype*/, SpellSchoolMask /*damageSchoolMask*/) override
     {
-        if (damage >= me->GetHealth() && _platform < POINT_MIDDLE)
+        if (damage >= me->GetHealth() && _platform < POINT_MIDDLE && !_hasPretendedToDie)
         {
+            _hasPretendedToDie = true;
             damage = 0;
             DoCastSelf(SPELL_EMBER_BLAST, true);
             PretendToDie(me);
-            ScheduleUniqueTimedEvent(1s, [&]{
+            _transitionScheduler.Schedule(1s, [this](TaskContext)
+            {
                 me->SetVisible(false);
-            }, EVENT_INVISIBLE);
-            ScheduleUniqueTimedEvent(8s, [&]{
+            }).Schedule(8s, [this](TaskContext)
+            {
                 me->SetPosition(alarPoints[POINT_MIDDLE]);
-            }, EVENT_RELOCATE_MIDDLE);
-            ScheduleUniqueTimedEvent(12s, [&]
+            }).Schedule(12s, [this](TaskContext)
             {
                 me->SetStandState(UNIT_STAND_STATE_STAND);
                 me->SetVisible(true);
                 DoCastSelf(SPELL_CLEAR_ALL_DEBUFFS, true);
                 DoCastSelf(SPELL_REBIRTH_PHASE2);
-            }, EVENT_MOVE_TO_PHASE_2);
-            ScheduleUniqueTimedEvent(16001ms, [&]{
+            }).Schedule(16001ms, [this](TaskContext)
+            {
                 me->SetHealth(me->GetMaxHealth());
                 me->SetReactState(REACT_AGGRESSIVE);
                 _noMelee = false;
@@ -204,7 +207,7 @@ struct boss_alar : public BossAI
                 _platform = POINT_MIDDLE;
                 me->GetMotionMaster()->MoveChase(me->GetVictim());
                 ScheduleAbilities();
-            }, EVENT_REBIRTH);
+            });
         }
     }
 
@@ -223,6 +226,7 @@ struct boss_alar : public BossAI
 
     void ScheduleAbilities()
     {
+        _transitionScheduler.CancelAll();
         ScheduleTimedEvent(57s, [&]
         {
             DoCastVictim(SPELL_MELT_ARMOR);
@@ -356,6 +360,8 @@ struct boss_alar : public BossAI
 
     void UpdateAI(uint32 diff) override
     {
+        _transitionScheduler.Update(diff);
+
         if (!UpdateVictim())
         {
             return;
@@ -405,6 +411,7 @@ struct boss_alar : public BossAI
     }
 
 private:
+    bool _hasPretendedToDie;
     bool _canAttackCooldown;
     bool _baseAttackOverride;
     bool _spawnPhoenixes;
@@ -413,6 +420,7 @@ private:
     uint8 _platformRoll;
     uint8 _noQuillTimes;
     std::chrono::seconds _platformMoveRepeatTimer;
+    TaskScheduler _transitionScheduler;
 };
 
 class CastQuill : public BasicEvent
