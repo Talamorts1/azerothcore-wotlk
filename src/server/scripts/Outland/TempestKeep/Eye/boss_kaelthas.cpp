@@ -737,7 +737,7 @@ struct boss_kaelthas : public BossAI
             DoCastSelf(SPELL_PHOENIX);
         }, 31450ms, 66550ms);
         //sequence
-        ScheduleTimedEvent(20s, [&]
+        ScheduleTimedEvent(20s, 23s, [&]
         {
             if (roll_chance_i(50))
                 Talk(SAY_MINDCONTROL);
@@ -746,17 +746,7 @@ struct boss_kaelthas : public BossAI
             {
                 DoCastSelf(SPELL_ARCANE_DISRUPTION);
             });
-        }, 50s);
-        ScheduleTimedEvent(43s, [&]
-        {
-            if (roll_chance_i(50))
-                Talk(SAY_MINDCONTROL);
-            me->CastCustomSpell(SPELL_MIND_CONTROL, SPELLVALUE_MAX_TARGETS, 3, me, false);
-            scheduler.Schedule(3s, [this](TaskContext)
-            {
-                DoCastSelf(SPELL_ARCANE_DISRUPTION);
-            });
-        }, 53s);
+        }, 23s, 26s);
         ScheduleTimedEvent(60s, [&]
         {
             Talk(SAY_PYROBLAST);
@@ -831,6 +821,7 @@ struct npc_lord_sanguinar : public ScriptedAI
                 _hasDied = true;
             }
         }
+        scheduler.CancelAll();
     }
 
     void UpdateAI(uint32 diff) override
@@ -919,6 +910,7 @@ struct npc_capernian : public ScriptedAI
                 _hasDied = true;
             }
         }
+        scheduler.CancelAll();
     }
 
     void UpdateAI(uint32 diff) override
@@ -982,6 +974,7 @@ struct npc_telonicus : public ScriptedAI
                 _hasDied = true;
             }
         }
+        scheduler.CancelAll();
     }
 
     void UpdateAI(uint32 diff) override
@@ -1016,7 +1009,6 @@ struct npc_thaladred : public ScriptedAI
         scheduler.CancelAll();
         me->SetReactState(REACT_PASSIVE);
         _hasDied = false;
-        me->SetWalk(false);
     }
 
     void JustEngagedWith(Unit* /*who*/) override
@@ -1025,7 +1017,6 @@ struct npc_thaladred : public ScriptedAI
         {
             Talk(SAY_THALADRED_AGGRO);
         }
-        me->SetWalk(true);
         ScheduleTimedEvent(100ms, [&]
         {
             DoResetThreatList();
@@ -1068,6 +1059,7 @@ struct npc_thaladred : public ScriptedAI
                 _hasDied = true;
             }
         }
+        scheduler.CancelAll();
     }
 
     void UpdateAI(uint32 diff) override
