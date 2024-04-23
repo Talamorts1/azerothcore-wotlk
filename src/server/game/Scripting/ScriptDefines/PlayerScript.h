@@ -199,6 +199,12 @@ enum PlayerHook
     PLAYERHOOK_CAN_SEND_ERROR_ALREADY_LOOTED,
     PLAYERHOOK_ON_AFTER_CREATURE_LOOT,
     PLAYERHOOK_ON_AFTER_CREATURE_LOOT_MONEY,
+    PLAYERHOOK_ON_HANDLE_TAXI,
+    PLAYERHOOK_ON_LOGOUT_REQUEST,
+    PLAYERHOOK_MAX_PRIMARY_TRADE_SKILL,
+    PLAYERHOOK_ON_REPUTATION_GAIN,
+    PLAYERHOOK_UPDATE_GATHERING_SKILL,
+    PLAYERHOOK_UPDATE_CRAFTING_SKILL,
     PLAYERHOOK_END
 };
 
@@ -770,11 +776,9 @@ public:
     // Called when player gains reputation
     virtual void OnReputationGain(Player* player, float& gain) { }
 
-    // Called when player gains a skill in gathering
-    virtual void UpdateGatheringSkillAmount(Player* /*player*/, uint32& /*amount*/) { }
-
-    // Called when a player gains a skill point in crafting
-    virtual void UpdateCraftingSkillAmount(Player* /*player*/, uint32& /*amount*/) {}
+    //called on updating gathering & crafting skills
+    virtual void UpdateGatheringSkillAmount(Player* player, uint32& UpdateAmount) {}
+    virtual void UpdateCraftingSkillAmount(Player* player, uint32& updateAmount) {}
 };
 
 #endif

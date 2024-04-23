@@ -86,7 +86,7 @@ void ScriptMgr::OnCreatureKilledByPet(Player* petOwner, Creature* killed)
 
 void ScriptMgr::OnPlayerKilledByCreature(Creature* killer, Player* killed, bool& durabilityLoss)
 {
-    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_PLAYER_KILLED_BY_CREATURE, script->OnPlayerKilledByCreature(killer, killed));
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_PLAYER_KILLED_BY_CREATURE, script->OnPlayerKilledByCreature(killer, killed, durabilityLoss));
 }
 
 void ScriptMgr::OnPlayerLevelChanged(Player* player, uint8 oldLevel)
@@ -885,12 +885,42 @@ bool ScriptMgr::AnticheatCheckMovementInfo(Player* player, MovementInfo const& m
     CALL_ENABLED_BOOLEAN_HOOKS(PlayerScript, PLAYERHOOK_ANTICHEAT_CHECK_MOVEMENT_INFO, !script->AnticheatCheckMovementInfo(player, movementInfo, mover, jump));
 }
 
-PlayerScript::PlayerScript(const char* name)
-    : ScriptObject(name)
+bool ScriptMgr::OnPlayerHandleTaxi(Player* player, TaxiNodesEntry const* sourcepath)
+{
+    CALL_ENABLED_BOOLEAN_HOOKS(PlayerScript, PLAYERHOOK_ON_HANDLE_TAXI, !script->OnPlayerHandleTaxi(player, sourcepath));
+}
+
+void ScriptMgr::OnPlayerLogoutRequest(Player* player)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_LOGOUT_REQUEST, script->OnPlayerLogoutRequest(player));
+}
+
+void ScriptMgr::MaxPrimaryTradeSkill(Player* player, uint32& maxSkillsAllowed)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_MAX_PRIMARY_TRADE_SKILL, script->MaxPrimaryTradeSkill(player, maxSkillsAllowed));
+}
+
+void ScriptMgr::OnReputationGain(Player* player, float& reputation)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_REPUTATION_GAIN, script->OnReputationGain(player, reputation));
+}
+
+void ScriptMgr::UpdateGatheringSkillAmount(Player* player, uint32& UpdateAmount)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_UPDATE_GATHERING_SKILL, script->UpdateGatheringSkillAmount(player, UpdateAmount));
+}
+
+void ScriptMgr::UpdateCraftingSkillAmount(Player* player, uint32& UpdateAmount)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_UPDATE_GATHERING_SKILL, script->UpdateCraftingSkillAmount(player,UpdateAmount))
+}
+
+PlayerScript::PlayerScript(const char* name, std::vector<uint16> enabledHooks)
+    : ScriptObject(name, PLAYERHOOK_END)
 {
     // If empty - enable all available hooks.
     if (enabledHooks.empty())
-        for (uint16 i = 0; i < PLAYERHOOK_END; ++i)
+        for (uint16 i = 0; i < PLAYERHOOK_END; i++)
             enabledHooks.emplace_back(i);
 
     ScriptRegistry<PlayerScript>::AddScript(this, std::move(enabledHooks));

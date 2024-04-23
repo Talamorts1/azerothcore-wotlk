@@ -462,8 +462,8 @@ public: /* PlayerScript */
     void OnPlayerLogoutRequest(Player* player);
     void MaxPrimaryTradeSkill(Player* player, uint32& maxSkillsAllowed);
     void OnReputationGain(Player* player, float& reputation);
-    void UpdateCraftingSkillAmount(Player* player, uint32& amount);
-    void UpdateGatheringSkillAmount(Player* player, uint32& amount);
+    void UpdateGatheringSkillAmount(Player* player, uint32& UpdateAmount);
+    void UpdateCraftingSkillAmount(Player* player, uint32& UpdateAmount);
 
     // Anti cheat
     void AnticheatSetCanFlybyServer(Player* player, bool apply);

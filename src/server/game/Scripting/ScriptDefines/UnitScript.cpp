@@ -26,7 +26,7 @@ void ScriptMgr::OnHeal(Unit* healer, Unit* reciever, uint32& gain)
 
 void ScriptMgr::OnDamage(Unit* attacker, Unit* victim, uint32& damage, DamageEffectType damagetype, SpellInfo const* spellProto)
 {
-    CALL_ENABLED_HOOKS(UnitScript, UNITHOOK_ON_DAMAGE, script->OnDamage(attacker, victim, damage));
+    CALL_ENABLED_HOOKS(UnitScript, UNITHOOK_ON_DAMAGE, script->OnDamage(attacker, victim, damage, damagetype, spellProto));
 }
 
 void ScriptMgr::ModifyPeriodicDamageAurasTick(Unit* target, Unit* attacker, uint32& damage, SpellInfo const* spellInfo)

@@ -810,6 +810,7 @@ bool Player::UpdateCraftSkill(uint32 spellid)
             uint32 craft_skill_gain =
                 sWorld->getIntConfig(CONFIG_SKILL_GAIN_CRAFTING);
             sScriptMgr->OnUpdateCraftingSkill(this, _spell_idx->second, SkillValue, craft_skill_gain);
+
             sScriptMgr->UpdateCraftingSkillAmount(this, craft_skill_gain);
 
             return UpdateSkillPro(
