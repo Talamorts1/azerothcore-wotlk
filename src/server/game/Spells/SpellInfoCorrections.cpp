@@ -4797,6 +4797,27 @@ void SpellMgr::LoadSpellInfoCorrections()
         spellInfo->MaxAffectedTargets = 5;
     });
 
+    // Master Ranged Buff
+    ApplySpellFix({ 38734 }, [](SpellInfo* spellInfo)
+        {
+            spellInfo->AttributesEx3 |= SPELL_ATTR3_ALLOW_AURA_WHILE_DEAD;
+            spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(367); // 2 Hours
+        });
+
+    // Master Buff (Magic)
+    ApplySpellFix({ 35912 }, [](SpellInfo* spellInfo)
+        {
+            spellInfo->AttributesEx3 |= SPELL_ATTR3_ALLOW_AURA_WHILE_DEAD;
+            spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(367); // 2 Hours
+        });
+
+    // Master Buff (Melee)
+    ApplySpellFix({ 35874 }, [](SpellInfo* spellInfo)
+        {
+            spellInfo->AttributesEx3 |= SPELL_ATTR3_ALLOW_AURA_WHILE_DEAD;
+            spellInfo->DurationEntry = sSpellDurationStore.LookupEntry(367); // 2 Hours
+        });
+
     for (uint32 i = 0; i < GetSpellInfoStoreSize(); ++i)
     {
         SpellInfo* spellInfo = mSpellInfoMap[i];
