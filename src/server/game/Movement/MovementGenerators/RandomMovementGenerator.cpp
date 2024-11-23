@@ -25,6 +25,7 @@
 #include "ObjectAccessor.h"
 #include "Spell.h"
 #include "Util.h"
+#include "World.h"
 
 template<class T>
 RandomMovementGenerator<T>::~RandomMovementGenerator() { }
@@ -241,8 +242,6 @@ void RandomMovementGenerator<Creature>::DoInitialize(Creature* creature)
     if (!_wanderDistance)
         _wanderDistance = creature->GetWanderDistance();
 
-    _pathGenerator.reset();
-
     _nextMoveTime.Reset(creature->GetSpawnId() && creature->GetWanderDistance() == _wanderDistance ? urand(1, 5000) : 0);
     _wanderDistance = std::max((creature->GetWanderDistance() == _wanderDistance && creature->GetInstanceId() == 0) ? (creature->CanFly() ? MIN_WANDER_DISTANCE_AIR : MIN_WANDER_DISTANCE_GROUND) : 0.0f, _wanderDistance);
 
@@ -281,7 +280,6 @@ bool RandomMovementGenerator<Creature>::DoUpdate(Creature* creature, const uint3
     {
         _nextMoveTime.Reset(0);  // Expire the timer
         creature->StopMoving();
-        _pathGenerator.reset();
         return true;
     }
 
