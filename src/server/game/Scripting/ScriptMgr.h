@@ -621,6 +621,7 @@ public: /* SpellSC */
     void OnDummyEffect(WorldObject* caster, uint32 spellID, SpellEffIndex effIndex, GameObject* gameObjTarget);
     void OnDummyEffect(WorldObject* caster, uint32 spellID, SpellEffIndex effIndex, Creature* creatureTarget);
     void OnDummyEffect(WorldObject* caster, uint32 spellID, SpellEffIndex effIndex, Item* itemTarget);
+    bool OnModifySpellPower(Unit* caster, SpellInfo const* SpellId, uint32& PowerCost);
 
 public: /* GameEventScript */
     void OnGameEventStart(uint16 EventID);

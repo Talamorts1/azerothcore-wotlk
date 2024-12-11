@@ -84,6 +84,13 @@ void ScriptMgr::OnDummyEffect(WorldObject* caster, uint32 spellID, SpellEffIndex
     CALL_ENABLED_HOOKS(AllSpellScript, ALLSPELLHOOK_ON_DUMMY_EFFECT_ITEM, script->OnDummyEffect(caster, spellID, effIndex, itemTarget));
 }
 
+bool ScriptMgr::OnModifySpellPower(Unit* caster, SpellInfo const* spellInfo, uint32& PowerCost)
+{
+    CALL_ENABLED_BOOLEAN_HOOKS(AllSpellScript, ALLSPELLHOOK_MODIFY_SPELL_COST, !script->OnModifySpellPower(caster, spellInfo, PowerCost));
+}
+
+
+
 AllSpellScript::AllSpellScript(char const* name, std::vector<uint16> enabledHooks)
     : ScriptObject(name, ALLSPELLHOOK_END)
 {

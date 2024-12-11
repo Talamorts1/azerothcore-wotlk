@@ -36,6 +36,7 @@ enum AllSpellHook
     ALLSPELLHOOK_ON_DUMMY_EFFECT_GAMEOBJECT,
     ALLSPELLHOOK_ON_DUMMY_EFFECT_CREATURE,
     ALLSPELLHOOK_ON_DUMMY_EFFECT_ITEM,
+    ALLSPELLHOOK_MODIFY_SPELL_COST,
     ALLSPELLHOOK_END
 };
 
@@ -70,6 +71,8 @@ public:
     virtual void OnRemoveAuraScaleTargets(Spell* /*spell*/, TargetInfo& /*targetInfo*/, uint8 /*auraScaleMask*/, bool& /*needErase*/) { }
 
     virtual void OnBeforeAuraRankForLevel(SpellInfo const* /*spellInfo*/, SpellInfo const* /*latestSpellInfo*/, uint8 /*level*/) { }
+
+    virtual bool OnModifySpellPower(Unit* /*caster*/, SpellInfo const* /*spellInfo*/, uint32& /*PowerCost*/) { return false; }
 
     /**
      * @brief This hook called after spell dummy effect

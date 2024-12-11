@@ -5327,7 +5327,13 @@ void Spell::TakePower()
         if (m_caster->ToPlayer()->GetCommandStatus(CHEAT_POWER))
             return;
 
+
     Powers PowerType = Powers(m_spellInfo->PowerType);
+
+    uint32 modifiedPowerCost = m_powerCost;
+    if (sScriptMgr->OnModifySpellPower(m_caster, m_spellInfo, modifiedPowerCost))
+        m_powerCost = modifiedPowerCost;
+
     bool hit = true;
     if (m_caster->IsPlayer())
     {
