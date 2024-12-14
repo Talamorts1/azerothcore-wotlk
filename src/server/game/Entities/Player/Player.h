@@ -245,6 +245,11 @@ enum ReputationSource
     REPUTATION_SOURCE_SPELL
 };
 
+enum QuestSound
+{
+    QUEST_SOUND_FAILURE = 847
+};
+
 #define ACTION_BUTTON_ACTION(X) (uint32(X) & 0x00FFFFFF)
 #define ACTION_BUTTON_TYPE(X)   ((uint32(X) & 0xFF000000) >> 24)
 #define MAX_ACTION_BUTTON_ACTION_VALUE (0x00FFFFFF+1)
@@ -1058,6 +1063,18 @@ struct EntryPointData
 
     void ClearTaxiPath() { taxiPath.fill(0); }
     [[nodiscard]] bool HasTaxiPath() const { return taxiPath[0] && taxiPath[1]; }
+};
+
+struct PendingSpellCastRequest
+{
+    uint32 spellId;
+    uint32 category;
+    WorldPacket requestPacket;
+    bool isItem = false;
+    bool cancelInProgress = false;
+
+    PendingSpellCastRequest(uint32 spellId, uint32 category, WorldPacket&& packet, bool item = false, bool cancel = false)
+        : spellId(spellId), category(category), requestPacket(std::move(packet)), isItem(item) , cancelInProgress(cancel) {}
 };
 
 class Player : public Unit, public GridObject<Player>
@@ -2615,7 +2632,21 @@ public:
 
     std::string GetDebugInfo() const override;
 
- protected:
+    /*********************************************************/
+    /***               SPELL QUEUE SYSTEM                  ***/
+    /*********************************************************/
+protected:
+    uint32 GetSpellQueueWindow() const;
+    void ProcessSpellQueue();
+
+public:
+    std::deque<PendingSpellCastRequest> SpellQueue;
+    const PendingSpellCastRequest* GetCastRequest(uint32 category) const;
+    bool CanExecutePendingSpellCastRequest(SpellInfo const* spellInfo);
+    void ExecuteOrCancelSpellCastRequest(PendingSpellCastRequest* castRequest, bool isCancel = false);
+    bool CanRequestSpellCast(SpellInfo const* spellInfo);
+
+protected:
     // Gamemaster whisper whitelist
     WhisperListContainer WhisperList;
 
