@@ -148,6 +148,11 @@ void ScriptMgr::OnUnitDeath(Unit* unit, Unit* killer)
     CALL_ENABLED_HOOKS(UnitScript, UNITHOOK_ON_UNIT_DEATH, script->OnUnitDeath(unit, killer));
 }
 
+void ScriptMgr::OnKillRewardAllowed(Unit* killer, Unit* victim, bool& allowreward, Player*& player)
+{
+    CALL_ENABLED_HOOKS(UnitScript, UNITHOOK_ALLOW_REWARD, script->OnKillRewardAllowed(killer, victim, allowreward, player));
+}
+
 UnitScript::UnitScript(const char* name, bool addToScripts, std::vector<uint16> enabledHooks)
     : ScriptObject(name, UNITHOOK_END)
 {

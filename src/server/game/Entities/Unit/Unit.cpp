@@ -17716,6 +17716,8 @@ void Unit::Kill(Unit* killer, Unit* victim, bool durabilityLoss, WeaponAttackTyp
     if (creature)
     {
         isRewardAllowed = creature->IsDamageEnoughForLootingAndReward();
+        sScriptMgr->OnKillRewardAllowed(killer, creature, isRewardAllowed, player);
+
         if (!isRewardAllowed)
             creature->SetLootRecipient(nullptr);
     }
