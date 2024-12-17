@@ -19,6 +19,7 @@
 #define SCRIPT_OBJECT_PLAYER_SCRIPT_H_
 
 #include "ScriptObject.h"
+#include "TicketMgr.h"
 #include "SharedDefines.h"
 #include <vector>
 
@@ -790,7 +791,7 @@ public:
     virtual void UpdateCraftingSkillAmount(Player* player, uint32& updateAmount) {}
 
     // Called when a player creates a ticket
-    virtual void OnPlayerCreateTicket(Player* player, std::string& message) {}
+    virtual void OnPlayerCreateTicket(Player* player, GmTicket& ticket) {}
 };
 
 #endif

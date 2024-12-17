@@ -17,6 +17,7 @@
 
 #include "PlayerScript.h"
 #include "ScriptMgr.h"
+#include "TicketMgr.h"
 #include "ScriptMgrMacros.h"
 
 void ScriptMgr::OnBeforePlayerDurabilityRepair(Player* player, ObjectGuid npcGUID, ObjectGuid itemGUID, float& discountMod, uint8 guildBank)
@@ -925,9 +926,9 @@ void ScriptMgr::UpdateCraftingSkillAmount(Player* player, uint32& UpdateAmount)
     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_UPDATE_CRAFTING_SKILL, script->UpdateCraftingSkillAmount(player,UpdateAmount))
 }
 
-void ScriptMgr::OnPlayerCreateTicket(Player* player, std::string& message)
+void ScriptMgr::OnPlayerCreateTicket(Player* player, GmTicket& ticket)
 {
-    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_CREATED_TOCKET, script->OnPlayerCreateTicket(player, message))
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_CREATED_TOCKET, script->OnPlayerCreateTicket(player, ticket));
 }
 
 PlayerScript::PlayerScript(const char* name, std::vector<uint16> enabledHooks)

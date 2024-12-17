@@ -37,6 +37,7 @@
 #include "Weather.h"
 #include "World.h"
 #include <atomic>
+#include "TicketMgr.h"
 
 // Add support old api modules
 #include "AllScriptsObjects.h"
@@ -465,7 +466,7 @@ public: /* PlayerScript */
     void OnReputationGain(Player* player, float& reputation);
     void UpdateGatheringSkillAmount(Player* player, uint32& UpdateAmount);
     void UpdateCraftingSkillAmount(Player* player, uint32& UpdateAmount);
-    void OnPlayerCreateTicket(Player* player, std::string& message);
+    void OnPlayerCreateTicket(Player* player, GmTicket& ticket);
 
     // Anti cheat
     void AnticheatSetCanFlybyServer(Player* player, bool apply);

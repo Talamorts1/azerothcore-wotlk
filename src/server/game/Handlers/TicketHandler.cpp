@@ -119,7 +119,7 @@ void WorldSession::HandleGMTicketCreateOpcode(WorldPacket& recvData)
         sTicketMgr->AddTicket(ticket);
         sTicketMgr->UpdateLastChange();
 
-        sScriptMgr->OnPlayerCreateTicket(GetPlayer(), message);
+        sScriptMgr->OnPlayerCreateTicket(GetPlayer(), *ticket);
 
         ChatHandler(nullptr).SendGMText(LANG_COMMAND_TICKETNEW, GetPlayer()->GetName(), ticket->GetId());
 
