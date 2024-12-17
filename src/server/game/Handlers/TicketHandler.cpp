@@ -25,6 +25,7 @@
 #include "World.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
+#include "ScriptMgr.h"
 #include <zlib.h>
 
 void WorldSession::HandleGMTicketCreateOpcode(WorldPacket& recvData)
@@ -117,6 +118,8 @@ void WorldSession::HandleGMTicketCreateOpcode(WorldPacket& recvData)
 
         sTicketMgr->AddTicket(ticket);
         sTicketMgr->UpdateLastChange();
+
+        sScriptMgr->OnPlayerCreateTicket(GetPlayer(), message);
 
         ChatHandler(nullptr).SendGMText(LANG_COMMAND_TICKETNEW, GetPlayer()->GetName(), ticket->GetId());
 

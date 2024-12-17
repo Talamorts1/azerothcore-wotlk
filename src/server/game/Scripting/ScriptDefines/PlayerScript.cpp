@@ -922,7 +922,12 @@ void ScriptMgr::UpdateGatheringSkillAmount(Player* player, uint32& UpdateAmount)
 
 void ScriptMgr::UpdateCraftingSkillAmount(Player* player, uint32& UpdateAmount)
 {
-    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_UPDATE_GATHERING_SKILL, script->UpdateCraftingSkillAmount(player,UpdateAmount))
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_UPDATE_CRAFTING_SKILL, script->UpdateCraftingSkillAmount(player,UpdateAmount))
+}
+
+void ScriptMgr::OnPlayerCreateTicket(Player* player, std::string& message)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_CREATED_TOCKET, script->OnPlayerCreateTicket(player, message))
 }
 
 PlayerScript::PlayerScript(const char* name, std::vector<uint16> enabledHooks)

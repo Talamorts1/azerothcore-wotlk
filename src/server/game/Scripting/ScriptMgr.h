@@ -465,6 +465,7 @@ public: /* PlayerScript */
     void OnReputationGain(Player* player, float& reputation);
     void UpdateGatheringSkillAmount(Player* player, uint32& UpdateAmount);
     void UpdateCraftingSkillAmount(Player* player, uint32& UpdateAmount);
+    void OnPlayerCreateTicket(Player* player, std::string& message);
 
     // Anti cheat
     void AnticheatSetCanFlybyServer(Player* player, bool apply);

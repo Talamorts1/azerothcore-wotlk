@@ -210,6 +210,7 @@ enum PlayerHook
     PLAYERHOOK_ON_REPUTATION_GAIN,
     PLAYERHOOK_UPDATE_GATHERING_SKILL,
     PLAYERHOOK_UPDATE_CRAFTING_SKILL,
+    PLAYERHOOK_CREATED_TOCKET,
     PLAYERHOOK_END
 };
 
@@ -787,6 +788,9 @@ public:
     //called on updating gathering & crafting skills
     virtual void UpdateGatheringSkillAmount(Player* player, uint32& UpdateAmount) {}
     virtual void UpdateCraftingSkillAmount(Player* player, uint32& updateAmount) {}
+
+    // Called when a player creates a ticket
+    virtual void OnPlayerCreateTicket(Player* player, std::string& message) {}
 };
 
 #endif
