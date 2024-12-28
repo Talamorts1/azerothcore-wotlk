@@ -236,6 +236,7 @@ public:
                     if (NPC_TyrannusGUID)
                         if (Creature* c = instance->GetCreature(NPC_TyrannusGUID))
                             c->DespawnOrUnsummon();
+
                     NPC_TyrannusGUID = creature->GetGUID();
 
                     if (m_auiEncounter[2] == DONE)
