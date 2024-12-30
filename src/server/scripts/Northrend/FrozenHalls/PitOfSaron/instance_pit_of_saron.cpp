@@ -82,7 +82,6 @@ public:
                 c->AI()->SetData(DATA_START_INTRO, 0);
         }
 
-
         uint32 GetCreatureEntry(ObjectGuid::LowType /*guidLow*/, CreatureData const* data) override
         {
             if (teamIdInInstance == TEAM_NEUTRAL)
@@ -290,12 +289,9 @@ public:
                             icewall->SetGoState(GO_STATE_ACTIVE);
                     break;
                 case DATA_TYRANNUS:
-                    DoRespawnCreature(DATA_TYRANNUS);
                     m_auiEncounter[2] = data;
-
                     if (data == DONE)
                         instance->SummonCreature(NPC_SYLVANAS_PART2, TSLeaderSpawnPos);
-                        
                     break;
                 case DATA_ACHIEV_ELEVEN:
                     bAchievEleven = false;
