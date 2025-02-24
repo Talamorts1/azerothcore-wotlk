@@ -45,6 +45,7 @@ enum UnitHook
     UNITHOOK_ON_UNIT_ENTER_EVADE_MODE,
     UNITHOOK_ON_UNIT_ENTER_COMBAT,
     UNITHOOK_ON_UNIT_DEATH,
+    UNITHOOK_ON_UNIT_SET_SHAPESHIFT_FORM,
     UNITHOOK_ALLOW_REWARD,
     UNITHOOK_END
 };
@@ -116,6 +117,7 @@ public:
     virtual void OnUnitEnterEvadeMode(Unit* /*unit*/, uint8 /*evadeReason*/) { }
     virtual void OnUnitEnterCombat(Unit* /*unit*/, Unit* /*victim*/) { }
     virtual void OnUnitDeath(Unit* /*unit*/, Unit* /*killer*/) { }
+    virtual void OnUnitSetShapeshiftForm(Unit* /*unit*/, uint8 /*form*/) { }
     virtual void OnKillRewardAllowed(Unit* /*killer*/, Unit* /*victim*/, bool& /*IsRewardAllowed*/, Player*& /*player*/) {}
 };
 

@@ -117,7 +117,7 @@ void WorldSession::HandleGMTicketCreateOpcode(WorldPacket& recvData)
             ticket->SetChatLog(times, chatLog);
 
         sTicketMgr->AddTicket(ticket);
-        sTicketMgr->UpdateLastChange();
+        sTicketMgr->UpdateLastChange(ticket);
 
         sScriptMgr->OnPlayerCreateTicket(GetPlayer(), *ticket);
 
