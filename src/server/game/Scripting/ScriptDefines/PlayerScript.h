@@ -216,6 +216,8 @@ enum PlayerHook
     PLAYERHOOK_UPDATE_GATHERING_SKILL,
     PLAYERHOOK_UPDATE_CRAFTING_SKILL,
     PLAYERHOOK_CREATED_TOCKET,
+    PLAYERHOOK_ON_CAN_GIVE_LEVEL,
+    PLAYERHOOK_ON_SEND_LIST_INVENTORY,
     PLAYERHOOK_END
 };
 
@@ -810,6 +812,25 @@ public:
 
     // Called when a player creates a ticket
     virtual void OnPlayerCreateTicket(Player* player, GmTicket& ticket) {}
+
+    /**
+     * @brief This hook is called, to cancel the normal level up flow
+     *
+     * @param player Contains information about the Player
+     * @param newLevel The new level the player is about to be given
+     *
+     * @return true if player is allowed to gain the new level
+     */
+    virtual bool OnPlayerCanGiveLevel(Player* /*player*/, uint8 /*newLevel*/) { return true; }
+
+    /**
+     * @brief This hook is called whenever a player interacts with a vendor, and is then shown the vendor list
+     *
+     * @param player Contains information about the Player
+     * @param vendorGuid Guid of the vendor player is interacting with
+     * @param vendorEntry Entry of the vendor player is interacting with
+     */
+    virtual void OnPlayerSendListInventory(Player* /*player*/, ObjectGuid /*vendorGuid*/, uint32& /*vendorEntry*/) {}
 };
 
 #endif

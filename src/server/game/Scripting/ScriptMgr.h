@@ -476,6 +476,8 @@ public: /* PlayerScript */
     void UpdateGatheringSkillAmount(Player* player, uint32& UpdateAmount);
     void UpdateCraftingSkillAmount(Player* player, uint32& UpdateAmount);
     void OnPlayerCreateTicket(Player* player, GmTicket& ticket);
+    bool OnPlayerCanGiveLevel(Player* player, uint8 newLevel);
+    void OnPlayerSendListInventory(Player* player, ObjectGuid vendorGuid, uint32& vendorEntry);
 
     // Anti cheat
     void AnticheatSetCanFlybyServer(Player* player, bool apply);
