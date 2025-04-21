@@ -252,7 +252,8 @@ public:
     //Edit Player Faction
     static bool HandleModifyFactionCommand(ChatHandler* handler, Optional<uint32> factionID, Optional<uint32> flagID, Optional<uint32> npcFlagID, Optional<uint32> dynamicFlagID)
     {
-        Creature* target = handler->getSelectedCreature();
+        Unit* target = handler->getSelectedUnit();
+
         if (!target)
         {
             handler->SendErrorMessage(LANG_SELECT_CREATURE);
