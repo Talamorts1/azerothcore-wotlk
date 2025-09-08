@@ -742,6 +742,8 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
 
                     if (e.action.cast.castFlags & SMARTCAST_COMBAT_MOVE)
                     {
+                        CAST_AI(SmartAI, me->AI())->SetChaseOnInterrupt(true);
+
                         if (!me->isMoving()) // Don't try to reposition while we are moving
                         {
                             // If cast flag SMARTCAST_COMBAT_MOVE is set combat movement will not be allowed unless target is outside spell range, out of mana, or LOS.
@@ -893,7 +895,7 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
                         go->SetLootState(GO_READY);
                     }
 
-                    go->UseDoorOrButton(0, !!e.action.activateObject.alternative, unit);
+                    go->UseDoorOrButton(0, e.action.activateObject.alternative, unit);
                     LOG_DEBUG("sql.sql", "SmartScript::ProcessAction:: SMART_ACTION_ACTIVATE_GOBJECT. Gameobject {} activated", go->GetGUID().ToString());
                 }
             }
@@ -1483,14 +1485,14 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
         {
             for (WorldObject* target : targets)
                 if (IsUnit(target))
-                    target->ToUnit()->SetVisible(!!e.action.visibility.state);
+                    target->ToUnit()->SetVisible(e.action.visibility.state);
 
             break;
         }
         case SMART_ACTION_SET_ACTIVE:
         {
             for (WorldObject* target : targets)
-                target->setActive(!!e.action.setActive.state);
+                target->setActive(e.action.setActive.state);
             break;
         }
         case SMART_ACTION_ATTACK_START:
@@ -2506,12 +2508,8 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
         }
         case SMART_ACTION_START_CLOSEST_WAYPOINT:
         {
-            std::vector<uint32> waypoints;
-            std::copy_if(e.action.closestWaypointFromList.wps.begin(), e.action.closestWaypointFromList.wps.end(),
-                         std::back_inserter(waypoints), [](uint32 wp) { return wp != 0; });
-
             float distanceToClosest = std::numeric_limits<float>::max();
-            WayPoint* closestWp = nullptr;
+            uint32 closestWpId = 0;
 
             for (WorldObject* target : targets)
             {
@@ -2519,29 +2517,34 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
                 {
                     if (IsSmart(creature))
                     {
-                        for (uint32 wp : waypoints)
+                        for (uint32 wp = e.action.startClosestWaypoint.pathId1; wp <= e.action.startClosestWaypoint.pathId2; ++wp)
                         {
                             WPPath* path = sSmartWaypointMgr->GetPath(wp);
                             if (!path || path->empty())
                                 continue;
 
-                            auto itrWp = path->find(0);
+                            auto itrWp = path->find(1);
                             if (itrWp != path->end())
                             {
-                                if (WayPoint* wp = itrWp->second)
+                                if (WayPoint* wpData = itrWp->second)
                                 {
-                                    float distToThisPath = creature->GetDistance(wp->x, wp->y, wp->z);
+                                    float distToThisPath = creature->GetExactDistSq(wpData->x, wpData->y, wpData->z);
                                     if (distToThisPath < distanceToClosest)
                                     {
                                         distanceToClosest = distToThisPath;
-                                        closestWp = wp;
+                                        closestWpId = wp;
                                     }
                                 }
                             }
                         }
 
-                        if (closestWp)
-                            CAST_AI(SmartAI, creature->AI())->StartPath(false, closestWp->id, true);
+                        if (closestWpId)
+                        {
+                            bool repeat = e.action.startClosestWaypoint.repeat;
+                            bool run = e.action.startClosestWaypoint.run;
+
+                            CAST_AI(SmartAI, creature->AI())->StartPath(repeat, closestWpId, run);
+                        }
                     }
                 }
             }
@@ -3831,19 +3834,20 @@ void SmartScript::GetTargets(ObjectVector& targets, SmartScriptHolder const& e, 
                 {
                     targets.clear();
 
-                    if (owner->ToCreature())
+                    if (IsCreature(owner))
                     {
                         if (Unit* base = ObjectAccessor::GetUnit(*owner, owner->ToCreature()->GetCharmerOrOwnerGUID()))
-                        {
                             targets.push_back(base);
-                        }
                     }
-                    else
+                    else if (IsGameObject(owner))
                     {
                         if (Unit* base = ObjectAccessor::GetUnit(*owner, owner->ToGameObject()->GetOwnerGUID()))
-                        {
                             targets.push_back(base);
-                        }
+                    }
+                    else if (IsPlayer(owner))
+                    {
+                        if (Unit* base = owner->ToPlayer()->GetCharmerOrOwner())
+                            targets.push_back(base);
                     }
                 }
             }
@@ -4029,7 +4033,7 @@ void SmartScript::GetWorldObjectsInDist(ObjectVector& targets, float dist) const
 
     Acore::AllWorldObjectsInRange u_check(obj, dist);
     Acore::WorldObjectListSearcher<Acore::AllWorldObjectsInRange> searcher(obj, targets, u_check);
-    Cell::VisitAllObjects(obj, searcher, dist);
+    Cell::VisitObjects(obj, searcher, dist);
 }
 
 void SmartScript::ProcessEvent(SmartScriptHolder& e, Unit* unit, uint32 var0, uint32 var1, bool bvar, SpellInfo const* spell, GameObject* gob)
@@ -5251,7 +5255,7 @@ Unit* SmartScript::DoSelectLowestHpFriendly(float range, uint32 MinHPDiff) const
 
     Acore::MostHPMissingInRange u_check(me, range, MinHPDiff);
     Acore::UnitLastSearcher<Acore::MostHPMissingInRange> searcher(me, unit, u_check);
-    Cell::VisitGridObjects(me, searcher, range);
+    Cell::VisitObjects(me, searcher, range);
     return unit;
 }
 
@@ -5265,7 +5269,7 @@ Unit* SmartScript::DoSelectLowestHpPercentFriendly(float range, uint32 minHpPct,
     Unit* unit = nullptr;
     Acore::MostHPPercentMissingInRange u_check(me, range, minHpPct, maxHpPct);
     Acore::UnitLastSearcher<Acore::MostHPPercentMissingInRange> searcher(me, unit, u_check);
-    Cell::VisitGridObjects(me, searcher, range);
+    Cell::VisitObjects(me, searcher, range);
     return unit;
 }
 
@@ -5276,7 +5280,7 @@ void SmartScript::DoFindFriendlyCC(std::vector<Creature*>& creatures, float rang
 
     Acore::FriendlyCCedInRange u_check(me, range);
     Acore::CreatureListSearcher<Acore::FriendlyCCedInRange> searcher(me, creatures, u_check);
-    Cell::VisitGridObjects(me, searcher, range);
+    Cell::VisitObjects(me, searcher, range);
 }
 
 void SmartScript::DoFindFriendlyMissingBuff(std::vector<Creature*>& creatures, float range, uint32 spellid) const
@@ -5286,7 +5290,7 @@ void SmartScript::DoFindFriendlyMissingBuff(std::vector<Creature*>& creatures, f
 
     Acore::FriendlyMissingBuffInRange u_check(me, range, spellid);
     Acore::CreatureListSearcher<Acore::FriendlyMissingBuffInRange> searcher(me, creatures, u_check);
-    Cell::VisitGridObjects(me, searcher, range);
+    Cell::VisitObjects(me, searcher, range);
 }
 
 Unit* SmartScript::DoFindClosestFriendlyInRange(float range, bool playerOnly) const
@@ -5297,7 +5301,7 @@ Unit* SmartScript::DoFindClosestFriendlyInRange(float range, bool playerOnly) co
     Unit* unit = nullptr;
     Acore::AnyFriendlyNotSelfUnitInObjectRangeCheck u_check(me, me, range, playerOnly);
     Acore::UnitLastSearcher<Acore::AnyFriendlyNotSelfUnitInObjectRangeCheck> searcher(me, unit, u_check);
-    Cell::VisitAllObjects(me, searcher, range);
+    Cell::VisitObjects(me, searcher, range);
     return unit;
 }
 
