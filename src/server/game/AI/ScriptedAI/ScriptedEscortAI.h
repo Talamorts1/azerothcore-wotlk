@@ -64,6 +64,8 @@ public:
 
     void JustRespawned() override;
 
+    bool IsEscortNPC(bool /*onlyIfActive*/ = true) const override { return true; }
+
     void ReturnToLastPoint();
 
     void EnterEvadeMode(EvadeReason /*why*/ = EVADE_REASON_OTHER) override;
@@ -87,6 +89,7 @@ public:
 
     void GenerateWaypointArray(Movement::PointsArray* points);
 
+    using CreatureAI::WaypointReached;
     virtual void WaypointReached(uint32 pointId) = 0;
     virtual void WaypointStart(uint32 /*pointId*/) {}
 
