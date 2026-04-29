@@ -19,6 +19,9 @@
 #include "ScriptMgr.h"
 #include "TicketMgr.h"
 #include "ScriptMgrMacros.h"
+#include "World.h"
+
+#include <algorithm>
 
 void ScriptMgr::OnPlayerBeforeDurabilityRepair(Player* player, ObjectGuid npcGUID, ObjectGuid itemGUID, float& discountMod, uint8 guildBank)
 {
@@ -964,6 +967,12 @@ void ScriptMgr::OnPlayerGetReputationPriceDiscount(Player const* player, Faction
 void ScriptMgr::OnPlayerLearnTaxiNode(Player const* player, uint32 nodeId)
 {
     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_LEARN_TAXI_NODE, script->OnPlayerLearnTaxiNode(player, nodeId));
+}
+
+void ScriptMgr::OnPlayerBeforeGetLevelForXPGain(Player const* player, uint8& level)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_BEFORE_GET_LEVEL_FOR_XP_GAIN, script->OnPlayerBeforeGetLevelForXPGain(player, level));
+    level = std::clamp(level, uint8(1), uint8(sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL)));
 }
 
 PlayerScript::PlayerScript(const char* name, std::vector<uint16> enabledHooks)
