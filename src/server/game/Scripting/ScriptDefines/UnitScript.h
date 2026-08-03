@@ -45,6 +45,7 @@ enum UnitHook
     UNITHOOK_ON_UNIT_DEATH,
     UNITHOOK_ON_UNIT_SET_SHAPESHIFT_FORM,
     UNITHOOK_ALLOW_REWARD,
+    UNITHOOK_MODIFY_SPELL_POWER_COST,
     UNITHOOK_END
 };
 
@@ -76,6 +77,9 @@ public:
 
     // Called when Heal is Recieved
     virtual void ModifyHealReceived(Unit* /*target*/, Unit* /*healer*/, uint32& /*heal*/, SpellInfo const* /*spellInfo*/) { }
+
+    // Called when the power (mana/rage/energy/etc) cost of a spell is being calculated for a caster
+    virtual void ModifySpellPowerCost(Unit* /*caster*/, SpellInfo const* /*spellInfo*/, int32& /*powerCost*/) { }
 
     //Called when Damage is Dealt
     virtual uint32 DealDamage(Unit* /*AttackerUnit*/, Unit* /*pVictim*/, uint32 damage, DamageEffectType /*damagetype*/) { return damage; }
