@@ -92,6 +92,8 @@ enum PlayerHook
     PLAYERHOOK_ON_AFTER_SET_VISIBLE_ITEM_SLOT,
     PLAYERHOOK_ON_AFTER_MOVE_ITEM_FROM_INVENTORY,
     PLAYERHOOK_ON_EQUIP,
+    PLAYERHOOK_ON_BEFORE_ITEM_QUERY_SINGLE_RESPONSE,
+    PLAYERHOOK_ON_BEFORE_CHECK_ITEM_REQUIRED_LEVEL,
     PLAYERHOOK_ON_UNEQUIP_ITEM,
     PLAYERHOOK_ON_PLAYER_JOIN_BG,
     PLAYERHOOK_ON_PLAYER_JOIN_ARENA,
@@ -151,6 +153,7 @@ enum PlayerHook
     PLAYERHOOK_ON_APPLY_ITEM_MODS_BEFORE,
     PLAYERHOOK_ON_APPLY_ENCHANTMENT_ITEM_MODS_BEFORE,
     PLAYERHOOK_ON_APPLY_WEAPON_DAMAGE,
+    PLAYERHOOK_ON_APPLY_ARMOR_MODS_BEFORE,
     PLAYERHOOK_CAN_ARMOR_DAMAGE_MODIFIER,
     PLAYERHOOK_ON_GET_FERAL_AP_BONUS,
     PLAYERHOOK_CAN_APPLY_WEAPON_DEPENDENT_AURA_DAMAGE_MOD,
@@ -418,6 +421,14 @@ public:
     // After an item has been equipped
     virtual void OnPlayerEquip(Player* /*player*/, Item* /*it*/, uint8 /*bag*/, uint8 /*slot*/, bool /*update*/) { }
 
+    // Called right before the SMSG_ITEM_QUERY_SINGLE_RESPONSE packet is built for this player,
+    // allowing scripts to modify a local (non-cached) copy of the item's stats before it is sent.
+    virtual void OnPlayerBeforeItemQuerySingleResponse(Player* /*player*/, ItemTemplate& /*itemTemplate*/) { }
+
+    // Called before Player::CanUseItem enforces proto->RequiredLevel, letting scripts lower
+    // (or raise) the effective required level check performed against the player's level.
+    virtual void OnPlayerBeforeCheckItemRequiredLevel(Player* /*player*/, ItemTemplate const* /*proto*/, uint32& /*effectiveRequiredLevel*/) { }
+
     // After an item has been unequipped
     virtual void OnPlayerUnequip(Player* /*player*/, Item* /*it*/) { }
 
@@ -570,6 +581,10 @@ public:
     virtual void OnPlayerApplyEnchantmentItemModsBefore(Player* /*player*/, Item* /*item*/, EnchantmentSlot /*slot*/, bool /*apply*/, uint32 /*enchant_spell_id*/, uint32& /*enchant_amount*/) { }
 
     virtual void OnPlayerApplyWeaponDamage(Player* /*player*/, uint8 /*slot*/, ItemTemplate const* /*proto*/, float& /*minDamage*/, float& /*maxDamage*/, uint8 /*damageIndex*/) { }
+
+    // Fired before an item's Armor or resistance (Holy/Fire/Nature/Frost/Shadow/Arcane) value
+    // is applied to the player's real stat mods, letting scripts rescale it in place.
+    virtual void OnPlayerApplyArmorModsBefore(Player* /*player*/, uint8 /*slot*/, bool /*apply*/, uint32 /*statType*/, int32& /*val*/) { }
 
     [[nodiscard]] virtual bool OnPlayerCanArmorDamageModifier(Player* /*player*/) { return true; }
 

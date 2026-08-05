@@ -7005,6 +7005,10 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
 
     if (armor)
     {
+        int32 armorVal = int32(armor);
+        sScriptMgr->OnPlayerApplyArmorModsBefore(this, slot, apply, SPELL_SCHOOL_NORMAL, armorVal);
+        armor = uint32(armorVal);
+
         UnitModifierFlatType modType = TOTAL_VALUE;
         if (proto->Class == ITEM_CLASS_ARMOR)
         {
@@ -7030,22 +7034,46 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
         HandleBaseModFlatValue(SHIELD_BLOCK_VALUE, float(proto->Block), apply);
 
     if (proto->HolyRes)
-        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_HOLY, BASE_VALUE, float(proto->HolyRes), apply);
+    {
+        int32 holyRes = proto->HolyRes;
+        sScriptMgr->OnPlayerApplyArmorModsBefore(this, slot, apply, SPELL_SCHOOL_HOLY, holyRes);
+        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_HOLY, BASE_VALUE, float(holyRes), apply);
+    }
 
     if (proto->FireRes)
-        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_FIRE, BASE_VALUE, float(proto->FireRes), apply);
+    {
+        int32 fireRes = proto->FireRes;
+        sScriptMgr->OnPlayerApplyArmorModsBefore(this, slot, apply, SPELL_SCHOOL_FIRE, fireRes);
+        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_FIRE, BASE_VALUE, float(fireRes), apply);
+    }
 
     if (proto->NatureRes)
-        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_NATURE, BASE_VALUE, float(proto->NatureRes), apply);
+    {
+        int32 natureRes = proto->NatureRes;
+        sScriptMgr->OnPlayerApplyArmorModsBefore(this, slot, apply, SPELL_SCHOOL_NATURE, natureRes);
+        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_NATURE, BASE_VALUE, float(natureRes), apply);
+    }
 
     if (proto->FrostRes)
-        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_FROST, BASE_VALUE, float(proto->FrostRes), apply);
+    {
+        int32 frostRes = proto->FrostRes;
+        sScriptMgr->OnPlayerApplyArmorModsBefore(this, slot, apply, SPELL_SCHOOL_FROST, frostRes);
+        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_FROST, BASE_VALUE, float(frostRes), apply);
+    }
 
     if (proto->ShadowRes)
-        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_SHADOW, BASE_VALUE, float(proto->ShadowRes), apply);
+    {
+        int32 shadowRes = proto->ShadowRes;
+        sScriptMgr->OnPlayerApplyArmorModsBefore(this, slot, apply, SPELL_SCHOOL_SHADOW, shadowRes);
+        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_SHADOW, BASE_VALUE, float(shadowRes), apply);
+    }
 
     if (proto->ArcaneRes)
-        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_ARCANE, BASE_VALUE, float(proto->ArcaneRes), apply);
+    {
+        int32 arcaneRes = proto->ArcaneRes;
+        sScriptMgr->OnPlayerApplyArmorModsBefore(this, slot, apply, SPELL_SCHOOL_ARCANE, arcaneRes);
+        HandleStatFlatModifier(UNIT_MOD_RESISTANCE_ARCANE, BASE_VALUE, float(arcaneRes), apply);
+    }
 
     WeaponAttackType attType = Player::GetAttackBySlot(slot);
     if (attType != MAX_ATTACK)

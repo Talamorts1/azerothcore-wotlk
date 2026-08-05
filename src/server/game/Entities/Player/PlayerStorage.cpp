@@ -2393,7 +2393,12 @@ InventoryResult Player::CanUseItem(ItemTemplate const* proto) const
 
     if (GetLevel() < proto->RequiredLevel)
     {
-        return EQUIP_ERR_CANT_EQUIP_LEVEL_I;
+        uint32 effectiveRequiredLevel = proto->RequiredLevel;
+        sScriptMgr->OnPlayerBeforeCheckItemRequiredLevel(const_cast<Player*>(this), proto, effectiveRequiredLevel);
+        if (GetLevel() < effectiveRequiredLevel)
+        {
+            return EQUIP_ERR_CANT_EQUIP_LEVEL_I;
+        }
     }
 
     // If World Event is not active, prevent using event dependant items

@@ -355,6 +355,8 @@ public: /* PlayerScript */
     void OnPlayerAfterSetVisibleItemSlot(Player* player, uint8 slot, Item* item);
     void OnPlayerAfterMoveItemFromInventory(Player* player, Item* it, uint8 bag, uint8 slot, bool update);
     void OnPlayerEquip(Player* player, Item* it, uint8 bag, uint8 slot, bool update);
+    void OnPlayerBeforeItemQuerySingleResponse(Player* player, ItemTemplate& itemTemplate);
+    void OnPlayerBeforeCheckItemRequiredLevel(Player* player, ItemTemplate const* proto, uint32& effectiveRequiredLevel);
     void OnPlayerUnequip(Player* player, Item* it);
     void OnPlayerJoinBG(Player* player);
     void OnPlayerJoinArena(Player* player);
@@ -414,6 +416,7 @@ public: /* PlayerScript */
     void OnPlayerApplyItemModsBefore(Player* player, uint8 slot, bool apply, uint8 itemProtoStatNumber, uint32 statType, int32& val);
     void OnPlayerApplyEnchantmentItemModsBefore(Player* player, Item* item, EnchantmentSlot slot, bool apply, uint32 enchant_spell_id, uint32& enchant_amount);
     void OnPlayerApplyWeaponDamage(Player* player, uint8 slot, ItemTemplate const* proto, float& minDamage, float& maxDamage, uint8 damageIndex);
+    void OnPlayerApplyArmorModsBefore(Player* player, uint8 slot, bool apply, uint32 statType, int32& val);
     bool OnPlayerCanArmorDamageModifier(Player* player);
     void OnPlayerGetFeralApBonus(Player* player, int32& feral_bonus, int32 dpsMod, ItemTemplate const* proto, ScalingStatValuesEntry const* ssv);
     bool OnPlayerCanApplyWeaponDependentAuraDamageMod(Player* player, Item* item, WeaponAttackType attackType, AuraEffect const* aura, bool apply);

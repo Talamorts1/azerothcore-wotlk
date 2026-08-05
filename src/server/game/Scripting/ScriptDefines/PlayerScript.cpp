@@ -343,6 +343,16 @@ void ScriptMgr::OnPlayerEquip(Player* player, Item* it, uint8 bag, uint8 slot, b
     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_EQUIP, script->OnPlayerEquip(player, it, bag, slot, update));
 }
 
+void ScriptMgr::OnPlayerBeforeItemQuerySingleResponse(Player* player, ItemTemplate& itemTemplate)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_BEFORE_ITEM_QUERY_SINGLE_RESPONSE, script->OnPlayerBeforeItemQuerySingleResponse(player, itemTemplate));
+}
+
+void ScriptMgr::OnPlayerBeforeCheckItemRequiredLevel(Player* player, ItemTemplate const* proto, uint32& effectiveRequiredLevel)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_BEFORE_CHECK_ITEM_REQUIRED_LEVEL, script->OnPlayerBeforeCheckItemRequiredLevel(player, proto, effectiveRequiredLevel));
+}
+
 void ScriptMgr::OnPlayerUnequip(Player* player, Item* it)
 {
     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_UNEQUIP_ITEM, script->OnPlayerUnequip(player, it));
@@ -646,6 +656,11 @@ void ScriptMgr::OnPlayerApplyEnchantmentItemModsBefore(Player* player, Item* ite
 void ScriptMgr::OnPlayerApplyWeaponDamage(Player* player, uint8 slot, ItemTemplate const* proto, float& minDamage, float& maxDamage, uint8 damageIndex)
 {
     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_APPLY_WEAPON_DAMAGE, script->OnPlayerApplyWeaponDamage(player, slot, proto, minDamage, maxDamage, damageIndex));
+}
+
+void ScriptMgr::OnPlayerApplyArmorModsBefore(Player* player, uint8 slot, bool apply, uint32 statType, int32& val)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_APPLY_ARMOR_MODS_BEFORE, script->OnPlayerApplyArmorModsBefore(player, slot, apply, statType, val));
 }
 
 bool ScriptMgr::OnPlayerCanArmorDamageModifier(Player* player)

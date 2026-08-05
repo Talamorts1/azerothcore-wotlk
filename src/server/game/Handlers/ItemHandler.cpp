@@ -394,21 +394,28 @@ void WorldSession::HandleItemQuerySingleOpcode(WorldPacket& recvData)
 
     LOG_DEBUG("network.opcode", "STORAGE: Item Query = {}", item);
 
-    ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(item);
-    if (pProto)
+    ItemTemplate const* pProtoOriginal = sObjectMgr->GetItemTemplate(item);
+    if (pProtoOriginal)
     {
-        std::string Name = pProto->Name1;
-        std::string Description = pProto->Description;
+        std::string Name = pProtoOriginal->Name1;
+        std::string Description = pProtoOriginal->Description;
 
         int loc_idx = GetSessionDbLocaleIndex();
         if (loc_idx >= 0)
         {
-            if (ItemLocale const* il = sObjectMgr->GetItemLocale(pProto->ItemId))
+            if (ItemLocale const* il = sObjectMgr->GetItemLocale(pProtoOriginal->ItemId))
             {
                 ObjectMgr::GetLocaleString(il->Name, loc_idx, Name);
                 ObjectMgr::GetLocaleString(il->Description, loc_idx, Description);
             }
         }
+
+        // Local, mutable copy so scripts can adjust the stats sent to this specific
+        // player (e.g. level-scaling) without touching the shared/cached item template.
+        ItemTemplate itemTemplateCopy = *pProtoOriginal;
+        sScriptMgr->OnPlayerBeforeItemQuerySingleResponse(GetPlayer(), itemTemplateCopy);
+        ItemTemplate const* pProto = &itemTemplateCopy;
+
         // guess size
         WorldPacket queryData(SMSG_ITEM_QUERY_SINGLE_RESPONSE, 600);
         queryData << pProto->ItemId;
