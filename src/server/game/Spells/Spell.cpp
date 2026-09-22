@@ -5497,7 +5497,7 @@ void Spell::TakePower()
     Powers PowerType = Powers(m_spellInfo->PowerType);
 
     uint32 modifiedPowerCost = m_powerCost;
-    if (sScriptMgr->OnModifySpellPower(m_caster, m_spellInfo, modifiedPowerCost))
+    if (sScriptMgr->OnModifySpellPower(unitCaster, m_spellInfo, modifiedPowerCost))
         m_powerCost = modifiedPowerCost;
 
     bool hit = true;

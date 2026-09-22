@@ -2915,7 +2915,7 @@ int32 SpellInfo::CalcPowerCost(WorldObject const* caster, SpellSchoolMask school
     // PCT mod from user auras by school
     powerCost = int32(powerCost * (1.0f + unitCaster->GetFloatValue(static_cast<uint16>(UNIT_FIELD_POWER_COST_MULTIPLIER) + school)));
     // Allow scripts to further adjust the final power cost (e.g. discount under-leveled casters)
-    sScriptMgr->ModifySpellPowerCost(const_cast<Unit*>(caster), this, powerCost);
+    sScriptMgr->ModifySpellPowerCost(const_cast<Unit*>(unitCaster), this, powerCost);
 
     if (powerCost < 0)
         powerCost = 0;
